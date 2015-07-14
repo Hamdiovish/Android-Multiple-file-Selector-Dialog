@@ -19,6 +19,7 @@ public class CustomListSingleOnly extends ArrayAdapter<String>{
     private final Activity context;
     private final String[] web;
     String ParentFolder;
+    ParentFolder = path;
     public CustomListSingleOnly(Activity context, String[] web ,String path) {
         super(context, R.layout.list_single_only, web);
         this.context = context;
@@ -28,21 +29,39 @@ public class CustomListSingleOnly extends ArrayAdapter<String>{
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.list_single_only, null, true);
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
-        txtTitle.setText(web[position]);
-        if((new File(ParentFolder+"/"+web[position])).isDirectory()){
-            imageView.setImageResource(R.drawable.folder);//sets to folder
-        }else if((new File(ParentFolder+"/"+web[position])).isFile()) {//sets to file
-            Picasso.with(context).load(
-                    new File(
-                            ParentFolder + "/" + web[position]
-                    )).placeholder(R.drawable.document_gray).resize(50, 50).into(imageView);
-        }
-        return rowView;
-    }
+       if (view == null) {
+			LayoutInflater inflater = context.getLayoutInflater();
+			view = inflater.inflate(R.layout.list_single_only, null, true);
 
+			viewHolder = new ViewHolderItem();
+			viewHolder.txtTitle = (TextView) view.findViewById(R.id.txt);
+			viewHolder.imageView = (ImageView) view.findViewById(R.id.img);
+
+			view.setTag(viewHolder);
+
+		} else {
+			viewHolder = (ViewHolderItem) view.getTag();
+
+		}
+
+		viewHolder.txtTitle.setText(web[position]);
+		if ((new File(ParentFolder + "/" + web[position])).isDirectory()) {
+			viewHolder.imageView.setImageResource(R.drawable.folder);// sets to
+																		// folder
+		} else if ((new File(ParentFolder + "/" + web[position])).isFile()) {// sets
+																				// to
+																				// file
+			Picasso.with(context).load(new File(ParentFolder + "/" + web[position]))
+					.placeholder(R.drawable.document_gray).resize(50, 50).into(viewHolder.imageView);
+		}
+		return view;
+	}
+
+	static class ViewHolderItem {
+
+		TextView txtTitle;
+		ImageView imageView;
+
+	}
 }
 
