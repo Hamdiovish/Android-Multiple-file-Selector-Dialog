@@ -24,18 +24,33 @@ public class CustomList extends ArrayAdapter<String>{
         this.context = context;
         this.web = web;
         ParentFolder = path;
+        ViewHolderItem viewHolder;
+
     }
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.list_single, null, true);
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
-        txtTitle.setText(web[position]);
-        Picasso.with(context).load(
-                new File(
-                        ParentFolder+"/"+web[position]
-                )).placeholder(R.drawable.document).resize(50, 50).into(imageView);
-        return rowView;
+   if (view == null) {
+			LayoutInflater inflater = context.getLayoutInflater();
+			view = inflater.inflate(R.layout.list_single, null, true);
+			viewHolder = new ViewHolderItem();
+
+			viewHolder.txtTitle = (TextView) view.findViewById(R.id.txt);
+			viewHolder.imageView = (ImageView) view.findViewById(R.id.img);
+
+			view.setTag(viewHolder);
+
+		} else {
+			viewHolder = (ViewHolderItem) view.getTag();
+
+		}
+		viewHolder.txtTitle.setText(web[position]);
+		Picasso.with(context).load(new File(ParentFolder + "/" + web[position])).placeholder(R.drawable.document)
+				.resize(50, 50).into(viewHolder.imageView);
+		return view;
+	}
+
+	static class ViewHolderItem {
+		TextView txtTitle;
+		ImageView imageView;
     }
 }
